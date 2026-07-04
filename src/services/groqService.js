@@ -6,7 +6,7 @@ import { AI_DEFAULTS } from '../constants/index.js';
 
 const RETRY_ATTEMPTS = 3;
 const RETRY_DELAY_MS = 1000;
-const REQUEST_TIMEOUT_MS = 30_000;
+const REQUEST_TIMEOUT_MS = 8_000;
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
