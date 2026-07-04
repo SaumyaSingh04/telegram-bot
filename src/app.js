@@ -10,8 +10,18 @@ import { chat, clearHistory } from './controllers/chatController.js';
 import { validate, chatSchema } from './validators/chat.js';
 import logger from './logger/index.js';
 import config from './config/index.js';
+import { connectDB } from './config/database.js';
 import sessionRepository from './repositories/sessionRepository.js';
 import bot from './bot/bot.js';
+
+// Connect to MongoDB (required on Vercel since server.js is not run)
+connectDB().catch((err) => logger.error('MongoDB connection failed', { error: err.message }));
+
+// Register webhook with Telegram on cold start (idempotent)
+if (config.isProduction && config.telegram.webhookDomain) {
+  const webhookUrl = `${config.telegram.webhookDomain}${config.telegram.webhookPath}`;
+  bot.telegram.setWebhook(webhookUrl).catch((err) => logger.error('Failed to set webhook', { error: err.message }));
+}
 
 const app = express();
 
