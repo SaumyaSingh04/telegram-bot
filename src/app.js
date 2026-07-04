@@ -64,6 +64,11 @@ router.post('/chat/clear', clearHistory);
 
 app.use('/api/v1', router);
 
+// Root route
+app.get('/', (req, res) => {
+  res.json({ success: true, message: `${config.bot.name} v${config.bot.version} is running` });
+});
+
 // 404 handler
 app.use((req, res) => {
   res.status(HTTP_STATUS.NOT_FOUND).json({ success: false, message: 'Route not found' });

@@ -42,11 +42,6 @@ async function init() {
   logger.info(`Webhook set to ${webhookUrl}`);
 }
 
-// Root route
-app.get('/', (req, res) => {
-  res.json({ success: true, message: `${config.bot.name} v${config.bot.version} is running` });
-});
-
 export default async function handler(req, res) {
   await init();
   return app(req, res);
