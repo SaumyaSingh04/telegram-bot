@@ -11,6 +11,7 @@ import { validate, chatSchema } from './validators/chat.js';
 import logger from './logger/index.js';
 import config from './config/index.js';
 import sessionRepository from './repositories/sessionRepository.js';
+import bot from './bot/bot.js';
 
 const app = express();
 
@@ -63,6 +64,9 @@ router.post('/chat', validate(chatSchema), chat);
 router.post('/chat/clear', clearHistory);
 
 app.use('/api/v1', router);
+
+// Telegram webhook
+app.post(config.telegram.webhookPath, bot.webhookCallback(config.telegram.webhookPath));
 
 // Root route
 app.get('/', (req, res) => {
