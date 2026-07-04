@@ -5,6 +5,10 @@ import config from '../src/config/index.js';
 import { connectDB } from '../src/config/database.js';
 import logger from '../src/logger/index.js';
 
+// Register webhook middleware immediately (before any request hits)
+const webhookPath = config.telegram.webhookPath;
+app.use(webhookPath, bot.webhookCallback(webhookPath));
+
 let initialized = false;
 
 async function init() {
@@ -13,7 +17,6 @@ async function init() {
 
   await connectDB();
 
-  const webhookPath = config.telegram.webhookPath;
   const webhookUrl = `${config.telegram.webhookDomain}${webhookPath}`;
 
   try {
@@ -37,9 +40,13 @@ async function init() {
     logger.warn('Failed to set bot commands', { error: err.message });
   }
 
-  await bot.telegram.setWebhook(webhookUrl);
-  app.use(webhookPath, bot.webhookCallback(webhookPath));
-  logger.info(`Webhook set to ${webhookUrl}`);
+  try {
+    const webhookUrl = `${config.telegram.webhookDomain}${webhookPath}`;
+    await bot.telegram.setWebhook(webhookUrl);
+    logger.info(`Webhook set to ${webhookUrl}`);
+  } catch (err) {
+    logger.warn('Failed to set webhook', { error: err.message });
+  }
 }
 
 export default async function handler(req, res) {
