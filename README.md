@@ -153,3 +153,4 @@ npm start
 
 MIT
 # telegram-bot
+# premium-bot
